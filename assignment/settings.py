@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 from dotenv import find_dotenv, load_dotenv
 
+# Load environment variables from .env file
+load_dotenv(find_dotenv())
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,12 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g58@w2l51#vk#zol%ziq-w1o3t5a2((d@^xd9$j(fhzx)-*&8h'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -136,8 +140,6 @@ REST_FRAMEWORK = {
     )
 }
 
-# Load environment variables from .env file
-load_dotenv(find_dotenv())
 
 CELERY_BROKER_URL = os.getenv('REDIS_URI', 'redis://localhost:6379/0')  # Default to Redis if not set
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URI', 'redis://localhost:6379/0')  # Default to Redis if not set

@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=assignment.settings
+    depends_on:
+      - redis
+
+  celery:
+    build: .
+    command: celery -A assignment worker -l info --pool=solo
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=assignment.settings
+
+  telegram-bot:
+    build: .
+    command: python telegram_bot/bot.py
+    volumes:
+      - .:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=assignment.settings
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass riteshadmin
