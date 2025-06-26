@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import TelegramUsers
 from django.contrib.auth.models import User
+from .task import send_email_task
 
 # Serializer for User model
 class UserSerializer(serializers.ModelSerializer):
@@ -21,6 +22,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
+        # Send a welcome email asynchronously using Celery
+        send_email_task.delay_on_commit("Welcome to our service", "Thank you for registering!", [user.email])
         return user
  
 # Serializer for user login 
